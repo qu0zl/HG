@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="us">
+<head>
+	<meta charset="utf-8">
+		<title>S&W Hireling Generator</title>
+			<link href="jquery-ui.css" rel="stylesheet">
+			<style>
+.class_stats {
+	background-color:rgb(220,220,220);
+	margin:5px;
+	display:inline-block;
+}
+.class_stat {
+	display:inline-block;
+}
+.weight_input {
+	display:inline-block;
+}
+.stat_header {
+	display:block;
+}
+.class_title {
+	font-weight:bold;
+	font-size:larger;
+	margin:5px;
+}
+.character {
+	display:flex;
+	flex-flow: row;
+	margin:5px;
+}
+.character_name {
+	display:flex;
+	flex-flow: column;
+	margin:5px;
+}
+.character_stats {
+	display:flex;
+	flex-flow: row;
+	margin:5px;
+}
+.character_stat {
+	display:flex;
+	margin:5px;
+}
+			</style>
+
+</head>
+<body>
+
+<!--<h1>Welcome to the Swords and Wizardry hireling generator.</h1>-->
+
+<!-- Button -->
+<button id="generate">Generate a hireling</button>
+<form style="margin-top: 1em;">
+	<div id="radioset">
+	<input type="radio" id="radio1" name="radio"><label for="radio1">1</label>
+	<input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">D6</label>
+	<input type="radio" id="radio3" name="radio"><label for="radio3">10</label>
+	<input type="radio" id="radio4" name="radio"><label for="radio4">20</label>
+	</div>
+</form>
+
+<div id='min_stats_div'>
+</div>
+
+<DIV id='results'>
+</div>
+
+
+<script src="jquery.js"></script>
+<script src="jquery-ui.js"></script>
+<script>
+
+NUM_STATS = 6;
+STAT_STR = 0;
+STAT_DEX = 1;
+STAT_CON = 2;
+STAT_INT = 3;
+STAT_WIS = 4;
+STAT_CHA = 5;
+
+STAT_SHORT_NAMES = ["Str", "Dex", "Con", "Int", "Wis", "Cha"];
+
+// selects to enable/disable particular classes
+// option to ignore/require minimum stat values
+// selectors to change min stat requirements
+// selectors for stat roll, roll x, drop y
+
+var classes = [
+	{
+		name: 'Assassin',
+		stats:[12,12,0,12,0,0],
+		weighting:10
+	},
+	{
+		name: 'Cleric',
+		stats:[0,0,0,13,0,0], // not according to book, but min Wis 13 seems sensible for auto-gen
+		weighting:0
+	},
+	{
+		name: 'Druid',
+		stats:[0,0,0,0,12,14],
+		weighting:20
+	},
+	{
+		name: 'Fighter',
+		stats:[0,0,0,0,0,0],
+		weighting:0
+	},
+	{
+		name: 'Magic User',
+		stats:[0,0,0,13,0,0], // not according to book, but min Int 13 seems sensible for auto-gen
+		weighting:1
+	},
+	{
+		name: 'Monk',
+		stats:[12,15,0,0,15,0],
+		weighting:20
+	},
+	{
+		name: 'Paladin',
+		stats:[0,0,0,0,0,17],
+		weighting:100
+	},
+	{
+		name: 'Ranger',
+		stats:[0,0,15,12,12,0],
+		weighting:20
+	}
+];
+
+function randomRange(min,max) {
+	var randomNumber = Math.floor(Math.random()*(max-min+1)+min);
+	return randomNumber;
+}
+
+function possible_classes(stats) {
+	var i = 0, j = 0;
+	var return_array = [];
+	console.log("greg, pc is " + classes.length);
+	for (i=0; i<classes.length; i++) {
+		console.log("loop " + i);
+		if ("stats" in classes[i]) {
+			var allowed = true;
+			for (j=0; j<classes[i].stats.length; j++) {
+				if (classes[i].stats[j] > stats[j])
+					allowed = false;
+			}
+			if (allowed)
+				return_array.push(classes[i]);
+			console.log(classes[i]);
+		}
+	}
+	console.log("allowed classes " + JSON.stringify(return_array));
+	return return_array;
+}
+
+function d6() {
+	return randomRange(1,6);
+}
+
+function getStat(dieCount, dropCount) {
+	var i = 0 ;
+	var die = [];
+	var total = 0;
+	for (i=0; i<dieCount; i++)
+		die[i] = d6();
+	if (dropCount >= dieCount) // minimum 1 dice return
+		dropCount = dieCount - 1;
+	if (dropCount > 0) {
+		die.sort(function(a,b){return a-b;});
+		for(i=0; i<dropCount; i++) {
+			console.log("discarding " + die[0]);
+			die.shift();
+		}
+		console.log(die);
+	}
+	for (i=0; i<die.length; i++)
+		total += die[i];
+
+	return total;
+}
+
+function renderCharacterStats(stats)
+{
+	var text = '<DIV class="character_stats">';
+	var i;
+	for (i=0; i<NUM_STATS; i++) {
+		text += "<DIV class='character_stat'>" + stats[i] + "</DIV>";
+	}
+
+	text += '</DIV>';
+	return text;
+}
+
+function chooseClass(possible_classes)
+{
+	return "hard-coded";
+}
+
+function renderCharacterClass(character_class)
+{
+	var possible_classes = "";
+	var i;
+	for (i=0; i<character_class.length; i++) {
+		if (i>0)
+			possible_classes += ", ";
+		possible_classes += character_class[i].name;
+	}
+	var text = '<DIV class="character_class">';
+	text += chooseClass(character_class) + "</DIV><DIV class='character_pos_class'>" + possible_classes + "</DIV>";
+
+	return text;
+}
+
+function appendResult(character)
+{
+	var text='<DIV class="character"><DIV class="character_name">';
+	text += 'Greg' + '</DIV>';
+	text += renderCharacterStats(character.stats);
+	text += renderCharacterClass(character.class);
+	text += '</DIV>';
+	$('#results').append(text);
+}
+
+function generate() {
+	var stats = [];
+	var character = {};
+	var i;
+	for (i=0; i<NUM_STATS; i++)
+		stats[i] = getStat(4,1);
+	character['stats'] = stats;
+	character['class'] = possible_classes(stats);
+	appendResult(character);
+}
+
+$('#generate').button();
+
+$('#generate').click( function() {
+	generate();
+	} );
+
+function change_min_stat(event) {
+	var class_number = $(event.target).data('class');
+	var stat_number = $(event.target).data('stat');
+	classes[class_number].stats[stat_number] = event.target.value;
+}
+
+function onReady()
+{
+	var i, j, stat;
+	var stat_div = $('#min_stats_div');
+	for (i=0; i<classes.length; i++){
+		var text = "<DIV class='class_stats' name='min_stat_"+classes[i].name+"'>";
+		text += "<span class='class_title'>"+classes[i].name+"</span>";
+
+		for (stat=0; stat<6; stat++) {
+			text += "<DIV class='class_stat' name='min_stat_"+classes[i].name+'_'+stat+"'>";
+			text += '<span class=stat_header>'+STAT_SHORT_NAMES[stat]+'</span>';
+			text += '<select class="min_stat_select" data-class='+i+' data-stat='+stat+'>';
+			for (j=0; j<=18; j++) {
+				if (j!=1 && j!=2)
+					if (classes[i].stats[stat] == j)
+						text+='<option selected="selected">'+j+'</option>';
+					else
+						text+='<option>'+j+'</option>';
+			}
+			text+= '</select></DIV>';
+		}
+		text += "<DIV class='class_stat'><span class=stat_header>Weighting</span><input class='weight_input' size=3 data-class="+i+" value="+classes[i].weighting+"></input></DIV>";
+		text += '</DIV>';
+	    stat_div.append(text);
+
+	}
+	$( ".min_stat_select" ).change(change_min_stat);
+/*
+			  change: change_min_stat
+			  }); */
+}
+$(document).ready(onReady);
+
+</script>
+</body>
+
