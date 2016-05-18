@@ -43,6 +43,12 @@
 	display:flex;
 	margin:5px;
 }
+
+.character_pos_class {
+	display:flex;
+	margin-left:5px;
+	margin-right:5px;
+}
 			</style>
 
 </head>
@@ -246,7 +252,7 @@ function renderCharacterClass(character)
 		possible_classes += character.class[i].name;
 	}
 	var text = '<DIV class="character_class">';
-	text += chooseClass(character.class, character.stats) + "</DIV><DIV class='character_pos_class'>" + possible_classes + "</DIV>";
+	text += chooseClass(character.class, character.stats) + "</DIV><DIV class='character_pos_class'>" + (character.class.length > 1 ? "("+possible_classes+")" : "") + "</DIV>";
 
 	return text;
 }
