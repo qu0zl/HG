@@ -54,10 +54,10 @@
 <button id="generate">Generate a hireling</button>
 <form style="margin-top: 1em;">
 	<div id="radioset">
-	<input type="radio" id="radio1" name="radio"><label for="radio1">1</label>
-	<input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">D6</label>
-	<input type="radio" id="radio3" name="radio"><label for="radio3">10</label>
-	<input type="radio" id="radio4" name="radio"><label for="radio4">20</label>
+	<input type="radio" value=1 id="radio1" name="radio"><label for="radio1">1</label>
+	<input type="radio" value="D6" id="radio2" name="radio" checked="checked"><label for="radio2">D6</label>
+	<input type="radio" value=10 id="radio3" name="radio"><label for="radio3">10</label>
+	<input type="radio" value=20 id="radio4" name="radio"><label for="radio4">20</label>
 	</div>
 </form>
 
@@ -95,7 +95,7 @@ var classes = [
 	},
 	{
 		name: 'Cleric',
-		stats:[0,0,0,13,0,0], // not according to book, but min Wis 13 seems sensible for auto-gen
+		stats:[0,0,0,0,13,0], // not according to book, but min Wis 13 seems sensible for auto-gen
 		weighting:0
 	},
 	{
@@ -105,13 +105,13 @@ var classes = [
 	},
 	{
 		name: 'Fighter',
-		stats:[0,0,0,0,0,0],
+		stats:[13,0,0,0,0,0],
 		weighting:0
 	},
 	{
 		name: 'Magic User',
 		stats:[0,0,0,13,0,0], // not according to book, but min Int 13 seems sensible for auto-gen
-		weighting:1
+		weighting:0
 	},
 	{
 		name: 'Monk',
@@ -122,6 +122,11 @@ var classes = [
 		name: 'Paladin',
 		stats:[0,0,0,0,0,17],
 		weighting:100
+	},
+	{
+		name: 'Thief',
+		stats:[0,13,0,0,0,0],
+		weighting:0
 	},
 	{
 		name: 'Ranger',
@@ -194,22 +199,54 @@ function renderCharacterStats(stats)
 	return text;
 }
 
-function chooseClass(possible_classes)
+function chooseClass(possible_classes, character_stats)
 {
-	return "hard-coded";
+	var total_weight = 0;
+	var i;
+	var choice = 0;
+	/* If we meet any classes minimum stat values then we will choose one of those classes
+	   Otherwise will we pick between thief, fight, cleric and magic user depending on our highest of their 4 prime stats */
+	if (possible_classes.length > 0) {
+		for (i=0; i<possible_classes.length; i++)
+			total_weight += possible_classes[i].weighting;
+		console.log("total weight is " + total_weight);
+		choice = randomRange(0, total_weight);
+		for (i=0, total_weight=0; i < possible_classes.length; i++) {
+			total_weight += possible_classes[i].weighting;
+			console.log("choice " + choice + ", total " + total_weight);
+			if (total_weight >= choice)
+				break;
+		}
+		return possible_classes[i].name;
+	} else {
+		var i=0;
+		var choices=[ {stat:character_stats[STAT_STR], 'class':'Fighter'},
+						{stat:character_stats[STAT_WIS], 'class':'Cleric'},
+						{stat:character_stats[STAT_INT], 'class':'Magic User'},
+						{stat:character_stats[STAT_DEX], 'class':'Thief'} ];
+		choices.sort( function(a,b){ return b.stat - a.stat; });
+		console.log("stats sorted are " + JSON.stringify(choices));
+		// randomly choose between all with exact same prime stat
+		for (i=0; i<(choices.length-1); i++) {
+			console.log("comparing " + choices[i].stat + ", " + choices[i+1].stat);
+			if (choices[i].stat != choices[i+1].stat)
+				break;
+		}
+		return(choices[randomRange(0,i)].class);
+	}
 }
 
-function renderCharacterClass(character_class)
+function renderCharacterClass(character)
 {
 	var possible_classes = "";
 	var i;
-	for (i=0; i<character_class.length; i++) {
+	for (i=0; i<character.class.length; i++) {
 		if (i>0)
 			possible_classes += ", ";
-		possible_classes += character_class[i].name;
+		possible_classes += character.class[i].name;
 	}
 	var text = '<DIV class="character_class">';
-	text += chooseClass(character_class) + "</DIV><DIV class='character_pos_class'>" + possible_classes + "</DIV>";
+	text += chooseClass(character.class, character.stats) + "</DIV><DIV class='character_pos_class'>" + possible_classes + "</DIV>";
 
 	return text;
 }
@@ -219,7 +256,7 @@ function appendResult(character)
 	var text='<DIV class="character"><DIV class="character_name">';
 	text += 'Greg' + '</DIV>';
 	text += renderCharacterStats(character.stats);
-	text += renderCharacterClass(character.class);
+	text += renderCharacterClass(character);
 	text += '</DIV>';
 	$('#results').append(text);
 }
@@ -227,12 +264,23 @@ function appendResult(character)
 function generate() {
 	var stats = [];
 	var character = {};
-	var i;
-	for (i=0; i<NUM_STATS; i++)
-		stats[i] = getStat(4,1);
-	character['stats'] = stats;
-	character['class'] = possible_classes(stats);
-	appendResult(character);
+	var i, j;
+	var radio = $("#radioset input[type='radio']:checked");
+	var value = 1;
+	if (radio.length > 0) {
+		value = radio.val();
+	}
+	if (value == "D6") {
+		console.log("value was d6");
+		value = randomRange(1,6);
+	}
+	for (j=0; j<value; j++) {
+		for (i=0; i<NUM_STATS; i++)
+			stats[i] = getStat(4,1);
+		character['stats'] = stats;
+		character['class'] = possible_classes(stats);
+		appendResult(character);
+	}
 }
 
 $('#generate').button();
@@ -245,6 +293,12 @@ function change_min_stat(event) {
 	var class_number = $(event.target).data('class');
 	var stat_number = $(event.target).data('stat');
 	classes[class_number].stats[stat_number] = event.target.value;
+}
+
+function change_weighting(event) {
+	var class_number = $(event.target).data('class');
+	classes[class_number].weighting = parseInt(event.target.value);
+	console.log("value now " + classes[class_number].weighting);
 }
 
 function onReady()
@@ -273,7 +327,8 @@ function onReady()
 	    stat_div.append(text);
 
 	}
-	$( ".min_stat_select" ).change(change_min_stat);
+	$(".min_stat_select").change(change_min_stat);
+	$(".weight_input").change(change_weighting);
 /*
 			  change: change_min_stat
 			  }); */
