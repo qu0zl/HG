@@ -48,7 +48,7 @@
 	display:inline-block;
 	flex-flow: column;
 }
-#name_credits {
+.credits {
 	font-weight:light;
 	font-size:smaller;
 	margin-top:3em;
@@ -133,8 +133,9 @@
 		<DIV class='character_pos_class'>Possible Classes</DIV>
 	</DIV>
 </div>
-<DIV id='credits'>
-	<DIV id='name_credits'></DIV>
+<DIV id='credits' class='credits'>
+	<DIV id='name_credits' class='credit'></DIV>
+	<DIV id='SW_Credits' class='credit'>This site is not affiliated with Matthew J. Finch or Mythmere Games™. Swords & Wizardry, S&W, and Mythmere Games are the trademarks of Matthew J. Finch.</DIV>
 </DIV>
 
 
@@ -158,15 +159,11 @@ STAT_SHORT_NAMES = ["Str", "Dex", "Con", "Int", "Wis", "Cha"];
 // selectors to change min stat requirements
 // selectors for stat roll, roll x, drop y
 
-var test_distribution = 0;
+var test_distribution = 1;
 var distribution = [];
 
-/* with these values and a 4D6-drop-lowest approach I got a distribution for 200,000 runs of:
-   Total:200000  Assassin:11.091%, Cleric:15.0205%, Druid:13.6165%, Dwarf:8.429%, Elf:9.58%, Fighter:9.4335%, Magic User:9.8325%, Monk:1.6865%, Paladin:4.82%, Ranger:5.0525%, Thief:11.437999999999999%, 
-
-   With these values and a 3D6 approach,  I got a distributions for two runs of 200,000 each of:
-   Total:200000  Assassin:3.2515%, Cleric:22.0805%, Druid:4.707%, Dwarf:6.8145%, Elf:4.9635%, Fighter:16.9325%, Magic User:18.685%, Monk:0.21250000000000002%, Paladin:1.6575%, Ranger:0.9755%, Thief:19.72%, 
-   Total:200000  Assassin:3.1919999999999997%, Cleric:22.331500000000002%, Druid:4.74%, Dwarf:6.8715%, Elf:5.0305%, Fighter:16.827%, Magic User:18.390500000000003%, Monk:0.2075%, Paladin:1.6925%, Ranger:0.985%, Thief:19.732%, 
+/* with these values and a 4D6-drop-lowest approach I got a distribution for 400,000 runs of:
+	Total:400000  Assassin:12.18625%, Cleric:16.183500000000002%, Druid:6.64825%, Dwarf:6.097%, Elf:6.249%, Fighter:17.6815%, Magic User:10.50475%, Monk:1.8145000000000002%, Paladin:5.202500000000001%, Ranger:5.725750000000001%, Thief:11.706999999999999%, 
    */
 var classes = [
 	{
@@ -182,7 +179,7 @@ var classes = [
 	{
 		name: 'Druid',
 		stats:[0,0,0,0,12,14],
-		weighting:20
+		weighting:3
 	},
 	{
 		name: 'Dwarf',
@@ -192,12 +189,12 @@ var classes = [
 	{
 		name: 'Elf',
 		stats:[0,12,0,13,0,0],
-		weighting:5
+		weighting:2
 	},
 	{
 		name: 'Fighter',
 		stats:[13,0,0,0,0,0],
-		weighting:1
+		weighting:3
 	},
 	{
 		name: 'Magic User',
