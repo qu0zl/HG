@@ -26,6 +26,13 @@
 	border-width:thin;
 	margin:5px;
 }
+.title {
+	font-style:x-large;
+}
+.subtitle {
+	font-style:italic;
+	font-size:small;
+}
 .class_stats {
 	background-color:rgb(220,220,220);
 	margin:5px;
@@ -94,10 +101,11 @@
 </head>
 <body>
 
-<h1>Welcome to the Swords and Wizardry hireling generator.</h1>
+<h1 class='title'>Welcome to the Complete hireling generator.</h1>
+<h2 class='subtitle'>A hireling generator designed with Swords & Wizardry Complete in mind, but also suitable for other Old School RPGs</h2>
 
 <!-- Button -->
-<button id="generate">Generate a hireling</button>
+<button id="generate">Generate D6 hirelings</button>
 <DIV class="top_button_group">
 <DIV class="top_button">
 	<div id="radioset">Number to generate:
@@ -425,6 +433,15 @@ $('#generate').click( function() {
 	generate();
 	} );
 
+function change_number(event) {
+	var radio = $("#radioset input[type='radio']:checked");
+	var count_text = "a hireling";
+    if ( radio.length > 0 && radio.val() != "1") {
+		count_text = radio.val() + " hirelings";
+    }
+	$('#generate > span').text("Generate " + count_text);
+
+}
 function change_min_stat(event) {
 	var class_number = $(event.target).data('class');
 	var stat_number = $(event.target).data('stat');
@@ -465,6 +482,8 @@ function onReady()
 	$('#name_credits').html(name_credits());
 	$(".min_stat_select").change(change_min_stat);
 	$(".weight_input").change(change_weighting);
+	$("#radioset input[type='radio']").change(change_number);
+
 /*
 			  change: change_min_stat
 			  }); */
