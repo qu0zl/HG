@@ -27,6 +27,11 @@
 	display:inline-block;
 	flex-flow: column;
 }
+#name_credits {
+	font-weight:light;
+	font-size:smaller;
+	margin-top:3em;
+}
 .character {
 	display:flex;
 	flex-flow: row;
@@ -95,6 +100,9 @@
 		<DIV class='character_pos_class'>Possible Classes</DIV>
 	</DIV>
 </div>
+<DIV id='credits'>
+	<DIV id='name_credits'></DIV>
+</DIV>
 
 
 <script src="jquery.js"></script>
@@ -411,6 +419,7 @@ function onReady()
 	    stat_div.append(text);
 
 	}
+	$('#name_credits').html(name_credits());
 	$(".min_stat_select").change(change_min_stat);
 	$(".weight_input").change(change_weighting);
 /*
