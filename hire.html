@@ -20,6 +20,12 @@
 		<title>S&W Hireling Generator</title>
 			<link href="jquery-ui.css" rel="stylesheet">
 			<style>
+.top_button {
+	display:inline-block;
+	border-style:ridge;
+	border-width:thin;
+	margin:5px;
+}
 .class_stats {
 	background-color:rgb(220,220,220);
 	margin:5px;
@@ -92,14 +98,22 @@
 
 <!-- Button -->
 <button id="generate">Generate a hireling</button>
-<form style="margin-top: 1em;">
-	<div id="radioset">
+<DIV class="top_button_group">
+<DIV class="top_button">
+	<div id="radioset">Number to generate:
 	<input type="radio" value=1 id="radio1" name="radio"><label for="radio1">1</label>
 	<input type="radio" value="D6" id="radio2" name="radio" checked="checked"><label for="radio2">D6</label>
 	<input type="radio" value=10 id="radio3" name="radio"><label for="radio3">10</label>
 	<input type="radio" value=20 id="radio4" name="radio"><label for="radio4">20</label>
 	</div>
-</form>
+</DIV>
+<DIV class="top_button">
+	<DIV id="statset">Stat generation method:
+	<input type="radio" value=1 id="statgen1" name="statgen"><label for="statgen1">3D6</label>
+	<input type="radio" value=2 id="statgen2" name="statgen" checked="checked"><label for="statgen2">4D6 drop lowest</label>
+	</DIV>
+</DIV>
+</DIV>
 
 <div id='min_stats_div'>
 </div>
@@ -362,8 +376,6 @@ function calc_dist() {
 	if (i == distribution.length)
 		text += distribution[i-1] + ":" + (current/total)*100 + "%, ";
 
-	// greg do last one also...
-	//console.log(JSON.stringify(distribution));
 	console.log(text);
 }
 
@@ -372,6 +384,21 @@ function generate() {
 	var character = {};
 	var i, j;
 	var radio = $("#radioset input[type='radio']:checked");
+	var stat_method_radio = $("#statset input[type='radio']:checked");
+	var num_die = 4;
+	var drop_die = 1;
+	if ( stat_method_radio.length > 0) {
+		switch (stat_method_radio.val()) {
+			case "1":
+				num_die = 3;
+				drop_die = 0;
+				break;
+			case "2":
+				num_die = 4;
+				drop_die = 1;
+				break;
+		}
+	}
 	var value = 1;
 	if (radio.length > 0) {
 		value = radio.val();
@@ -384,7 +411,7 @@ function generate() {
 	for (j=0; j<value; j++) {
 		character.gender = randomRange(0,1);
 		for (i=0; i<NUM_STATS; i++){
-			stats[i] = getStat(4,1);
+			stats[i] = getStat(num_die,drop_die);
 		}
 		character['stats'] = stats;
 		character['class'] = possible_classes(stats);
