@@ -190,7 +190,8 @@ var classes = [
 		weighting:10,
 		armour:"leather",
 		weapon:[[100, "light"], [40, "light"], [25, "heavy"]],
-		ranged:[[40, "light ranged"]]
+		ranged:[[40, "light ranged"]],
+		shield:35
 	},
 	{
 		name: 'Cleric',
@@ -198,7 +199,8 @@ var classes = [
 		weighting:1,
 		armour:"heavy",
 		weapon:[[100,"cleric"]],
-		ranged:[[25, "cleric ranged"]]
+		ranged:[[25, "cleric ranged"]],
+		shield:40
 	},
 	{
 		name: 'Druid',
@@ -206,7 +208,8 @@ var classes = [
 		weighting:3,
 		armour:"leather",
 		weapon:[[100, "druid"]],
-		ranged:[[40, "cleric ranged"]]
+		ranged:[[40, "cleric ranged"]],
+		shield:40
 	},
 	{
 		name: 'Dwarf',
@@ -214,7 +217,8 @@ var classes = [
 		weighting:1,
 		weapon:[[100, "heavy"], [15, "light"]],
 		ranged:[[10, "ranged"]],
-		armour:"all"
+		armour:"all",
+		shield:40
 	},
 	{
 		name: 'Elf',
@@ -222,7 +226,8 @@ var classes = [
 		weighting:2,
 		weapon:[ [40, "heavy"], [35, "light"], [100, "light"]],
 		ranged:[[50, "ranged"]],
-		armour:"all"
+		armour:"all",
+		shield:30
 	},
 	{
 		name: 'Fighter',
@@ -230,7 +235,8 @@ var classes = [
 		weighting:3,
 		weapon:[[60, "heavy"], [25, "light"], [100, "light"]],
 		ranged:[[50, "ranged"]],
-		armour:"all"
+		armour:"all",
+		shield:50
 	},
 	{
 		name: 'Magic User',
@@ -252,7 +258,8 @@ var classes = [
 		weighting:100,
 		weapon:[[30, "light"], [30, "light"], [100, "heavy"]],
 		ranged:[[30, "ranged"]],
-		armour:"all"
+		armour:"all",
+		shield:70
 	},
 	{
 		name: 'Ranger',
@@ -260,7 +267,8 @@ var classes = [
 		weighting:20,
 		weapon:[[60, "light"], [40, "light"], [100, "heavy"]],
 		ranged:[[60, "ranged"]],
-		armour:"all"
+		armour:"all",
+		shield:40
 	},
 	{
 		name: 'Thief',
@@ -389,6 +397,12 @@ function render_armour(character_class) {
 	if (armour_group == undefined)
 		return "";
 	text += get_armour(armour_group).name;
+	var chance = 0;
+	if (character_class.shield){
+		if (randomRange(1,100) <= character_class.shield)
+			text+=", shield";
+	}
+		
 	return text;
 
 }
