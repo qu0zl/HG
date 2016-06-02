@@ -7,14 +7,14 @@ var traits = [
 	"poor personal hygiene",
 	"constantly scratching",
 	"missing top two front teeth",
-	'tattoo on inner forearm in an unusual foreign language that they think says "warrior spirit" but actually means "import duty paid"',
+	'tattoo on inner forearm in an unusual foreign language. Think it says "warrior spirit" but actually means "import duty paid"',
 	"thinks they can sing. They're wrong.",
 	"silver necklace with four different faiths' holy symbols",
 	"dagger with a (costume jewellery) jewelled pommel tucked into their belt",
 	"yellow sash stretching from left shoulder to right waist",
 	"missing right eye, wears a patch",
 	"left little finger missing last joint, scarring evidently old",
-	"greying at the temples. attempts to hide with hat.",
+	"greying at the temples. tries to hide with hat.",
 	"dirty fingernails",
 	"halitosis",
 	"heavy drinker (red nose and cheeks)",
@@ -54,7 +54,8 @@ var traits = [
 	"skilled at sleight of hand tricks",
 	"scars run from corners of mouth to below ears",
 	"tattoos on fingers of both hands spell words",
-	"shameless womanizer"
+	"shameless womanizer",
+	"has an invisible friend"
 ];
 
 function get_trait(character_class) {
