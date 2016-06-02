@@ -103,7 +103,7 @@ var traits = [
 	"former body guard",
 	"beggar",
 	"cut-purse",
-	"scion of destitute nobel family",
+	"scion of destitute noble family",
 	"transient",
 	"writes terrible plays. Wants you to act in them.",
 	"worries the Sun may not rise",
