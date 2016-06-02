@@ -39,7 +39,7 @@ var traits = [
 	"weak ankle",
 	"never gets tired",
 	"interrupts conversations",
-	"always says they've done what you did, but better"
+	"always says they've done what you did, but better",
 	"drop things. constantly",
 	"neat freak",
 	"collector of souvenirs (monster claws, etc.)",
@@ -115,10 +115,12 @@ var traits = [
 	"prone to panic attacks",
 	"passion for embroidery",
 	"former bailiff. Relished the job.",
-	"owned a tavern, it burnt down."
+	"owned a tavern, it burnt down.",
 	"arsonist",
 	"completely untrustworthy",
-	"sells information without morals"
+	"sells information without morals",
+    "thinks the party is conspiring against them",
+    "pure evil"
 ];
 
 function get_trait(character_class) {
