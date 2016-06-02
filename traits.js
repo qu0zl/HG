@@ -32,6 +32,18 @@ var traits = [
 	"always smiles",
 	"greasy",
 	"hirsute",
+	"slurred speech",
+	"stutters",
+	"never first in line",
+	"lucky",
+	"weak ankle",
+	"never gets tired",
+	"interrupts conversations",
+	"always says they've done what you did, but better"
+	"drop things. constantly",
+	"neat freak",
+	"collector of souvenirs (monster claws, etc.)",
+	"will try to sneak an extra coin from every treasure",
 
 	// thanks to me
 	"missing left eye, leaves scar uncovered",
@@ -101,7 +113,12 @@ var traits = [
 	"poor judge of character",
 	"terrible choice in romantic partners",
 	"prone to panic attacks",
-	"passion for embroidery"
+	"passion for embroidery",
+	"former bailiff. Relished the job.",
+	"owned a tavern, it burnt down."
+	"arsonist",
+	"completely untrustworthy",
+	"sells information without morals"
 ];
 
 function get_trait(character_class) {
