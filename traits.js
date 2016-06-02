@@ -92,7 +92,16 @@ var traits = [
 	"beggar",
 	"cut-purse",
 	"scion of destitute nobel family",
-	"transient"
+	"transient",
+	"writes terrible plays. Wants you to act in them.",
+	"worries the Sun may not rise",
+	"believes the Moon laughs at them",
+	"cannot distinguish left and right",
+	"village sporting hero. Misses glory days.",
+	"poor judge of character",
+	"terrible choice in romantic partners",
+	"prone to panic attacks",
+	"passion for embroidery"
 ];
 
 function get_trait(character_class) {
