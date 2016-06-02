@@ -53,7 +53,8 @@ var traits = [
 	"inveterate gambler",
 	"skilled at sleight of hand tricks",
 	"scars run from corners of mouth to below ears",
-	"tattoos on fingers of both hands spell words"
+	"tattoos on fingers of both hands spell words",
+	"shameless womanizer"
 ];
 
 function get_trait(character_class) {
