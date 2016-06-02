@@ -89,7 +89,7 @@
 .character_pos_class {
 	display:flex;
 	margin:5px;
-	width:20em;
+	width:16em;
 }
 .character_class {
 	display:flex;
@@ -99,7 +99,12 @@
 .character_equipment {
 	display:flex;
 	margin:5px;
-	width:20em;
+	width:16em;
+}
+.character_trait {
+	display:flex;
+	margin:5px;
+	max-width:16em;
 }
 			</style>
 
@@ -156,6 +161,7 @@
 <script src="jquery-ui.js"></script>
 <script src="name-gen.js"></script>
 <script src="equip.js"></script>
+<script src="traits.js"></script>
 <script>
 
 NUM_STATS = 6;
@@ -407,6 +413,11 @@ function render_armour(character_class) {
 
 }
 
+function render_trait(character_class) {
+	var text = "<DIV class='character_trait'>" + get_trait(character_class) + "</DIV>";
+	return text;
+}
+
 function render_equipment(character_class) {
 	var i = 0;
 	var weapons = get_weapons(character_class.weapon);
@@ -441,6 +452,7 @@ function renderCharacterClass(character)
 	text += chosen_class.name + "</DIV><DIV class='character_pos_class'>" + (character.class.length > 1 ? "("+possible_classes+")" : "") + "</DIV>";
 
 	text += render_equipment(chosen_class);
+	text += render_trait(chosen_class);
 	return text;
 }
 
