@@ -594,7 +594,7 @@ function onReady()
 			}
 			text+= '</select></DIV>';
 		}
-		text += "<DIV class='class_stat'><span class='stat_header'>Weighting</span><input class='weight_input' title='Weight chance of class being chosen when rolled stats allow.' size=3 data-class="+i+" value="+classes[i].weighting+"></input></DIV>";
+		text += "<DIV class='class_stat'><span class='stat_header'>Weighting</span><input class='weight_input' title='Weight chance of class being chosen when rolled stats allow. This affects the chance of the class being chosen from those classes that the stats allow - classes with high entry stats will still be unlikely to occur as suitable stats are unlikely to be rolled.' size=3 data-class="+i+" value="+classes[i].weighting+"></input></DIV>";
 		text += '</DIV>';
 	    stat_div.append(text);
 
