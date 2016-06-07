@@ -74,8 +74,8 @@
 	display:flex;
 	flex-flow: column;
 	margin:5px;
-	width:9em;
-    min-width:9em;
+	width:8em;
+    min-width:8em;
 }
 .character_stats {
 	display:flex;
@@ -132,9 +132,15 @@
 	</div>
 </DIV>
 <DIV class="top_button">
-	<DIV id="statset">Stat generation method:
+	<DIV id="statset">Stat generation:
 	<input type="radio" value=1 id="statgen1" name="statgen" title="3D6 rolled in order"><label for="statgen1">3D6</label>
 	<input type="radio" value=2 id="statgen2" name="statgen" checked="checked" title="4d6, drop the lowest dice, rolled in order"><label for="statgen2">4D6 drop lowest</label>
+	</DIV>
+</DIV>
+<DIV class="top_button">
+	<DIV id="equipset">Equipment generation:
+	<input type="radio" value=1 id="equipgen1" name="equipgen" checked="checked" title="Automatically select weapon/armour."><label for="equipgen1">Auto-Equip</label>
+	<input type="radio" value=2 id="equipgen2" name="equipgen" title="3D6 x 10 GP"><label for="equipgen2">Roll GP</label>
 	</DIV>
 </DIV>
 </DIV>
@@ -189,6 +195,9 @@ var distribution = [];
 // used to force generation of a specific class
 var generate_by_class_id = -1;
 var generate_by_class_count = 0;
+
+// do we auto-generate equipment or roll gold?
+var equip_method = 0;
 
 /* with these values and a 4D6-drop-lowest approach I got a distribution for 400,000 runs of:
 	Total:400000  Assassin:12.18625%, Cleric:16.183500000000002%, Druid:6.64825%, Dwarf:6.097%, Elf:6.249%, Fighter:17.6815%, Magic User:10.50475%, Monk:1.8145000000000002%, Paladin:5.202500000000001%, Ranger:5.725750000000001%, Thief:11.706999999999999%, 
@@ -450,20 +459,23 @@ function render_trait(character_class) {
 
 function render_equipment(character_class) {
 	var i = 0;
-	var weapons = get_weapons(character_class.weapon);
-	var ranged = get_weapons(character_class.ranged);
-	for (i=0; i<ranged.length; i++)
-		weapons.push(ranged[i]);
-
 	text = "<DIV class='character_equipment'>";
-	for (i=0; i<weapons.length; i++) {
-		if (i>0)
-			text += ', ';
-		text += weapons[i];
+	if ( equip_method == 0 ) {
+		var weapons = get_weapons(character_class.weapon);
+		var ranged = get_weapons(character_class.ranged);
+		for (i=0; i<ranged.length; i++)
+			weapons.push(ranged[i]);
+
+		for (i=0; i<weapons.length; i++) {
+			if (i>0)
+				text += ', ';
+			text += weapons[i];
+		}
+
+		text += render_armour(character_class);
+	} else {
+		text += ((randomRange(1,6)+randomRange(1,6)+randomRange(1,6))*10) + " GP";
 	}
-
-	text += render_armour(character_class);
-
 	text += "</DIV>";
 	return text;
 }
@@ -555,6 +567,7 @@ function generate() {
 	var i, j;
 	var radio = $("#radioset input[type='radio']:checked");
 	var stat_method_radio = $("#statset input[type='radio']:checked");
+	var equip_method_radio = $("#equipset input[type='radio']:checked");
 	var num_die = 4;
 	var drop_die = 1;
 	if ( stat_method_radio.length > 0) {
@@ -568,6 +581,12 @@ function generate() {
 				drop_die = 1;
 				break;
 		}
+	}
+	if ( equip_method_radio.length > 0) {
+		if (equip_method_radio.val() == "1")
+			equip_method = 0;
+		else
+			equip_method = 1;
 	}
 	var value = 1;
 	if (radio.length > 0) {
