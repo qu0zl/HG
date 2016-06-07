@@ -152,6 +152,7 @@
 			<DIV class="character_stat">Int</DIV>
 			<DIV class="character_stat">Wis</DIV>
 			<DIV class="character_stat">Cha</DIV>
+			<DIV class="character_stat" title="Hit-points. Includes +1 HP per HD for a CON of 13 or more, and -1 HP per HD for a CON of 8 or less.">HP</DIV>
 		</DIV>
 		<DIV class="character_class">Class</DIV>
 		<DIV class='character_pos_class'>Possible Classes</DIV>
@@ -206,7 +207,8 @@ var classes = [
 		armour:"leather",
 		weapon:[[100, "light"], [40, "light"], [25, "heavy"]],
 		ranged:[[40, "light ranged"]],
-		shield:35
+		shield:35,
+		HD:6
 	},
 	{
 		name: 'Cleric',
@@ -215,7 +217,8 @@ var classes = [
 		armour:"heavy",
 		weapon:[[100,"cleric"]],
 		ranged:[[25, "cleric ranged"]],
-		shield:40
+		shield:40,
+		HD:6
 	},
 	{
 		name: 'Druid',
@@ -224,7 +227,8 @@ var classes = [
 		armour:"leather",
 		weapon:[[100, "druid"]],
 		ranged:[[40, "cleric ranged"]],
-		shield:40
+		shield:40,
+		HD:6
 	},
 	{
 		name: 'Dwarf',
@@ -233,7 +237,8 @@ var classes = [
 		weapon:[[100, "heavy"], [15, "light"]],
 		ranged:[[10, "ranged"]],
 		armour:"all",
-		shield:40
+		shield:40,
+		HD:8
 	},
 	{
 		name: 'Elf',
@@ -242,7 +247,9 @@ var classes = [
 		weapon:[ [40, "heavy"], [35, "light"], [100, "light"]],
 		ranged:[[50, "ranged"]],
 		armour:"all",
-		shield:30
+		shield:30,
+		// should average results of a D4 and a D8. Taking a single D6 is very close and good enough for now
+		HD:6
 	},
 	{
 		name: 'Fighter',
@@ -251,21 +258,24 @@ var classes = [
 		weapon:[[60, "heavy"], [25, "light"], [100, "light"]],
 		ranged:[[50, "ranged"]],
 		armour:"all",
-		shield:50
+		shield:50,
+		HD:8
 	},
 	{
 		name: 'Magic User',
 		stats:[0,0,0,13,0,0], // not according to book, but min Int 13 seems sensible for auto-gen
 		weighting:1,
 		weapon:[[100, "magic user"]],
-		ranged:[[60, "magic user ranged"]]
+		ranged:[[60, "magic user ranged"]],
+		HD:4
 	},
 	{
 		name: 'Monk',
 		stats:[12,15,0,0,15,0],
 		weighting:20,
 		weapon:[[100, "monk"], [10, "monk"]],
-		ranged:[[10, "ranged"]]
+		ranged:[[10, "ranged"]],
+		HD:4
 	},
 	{
 		name: 'Paladin',
@@ -274,7 +284,8 @@ var classes = [
 		weapon:[[30, "light"], [30, "light"], [100, "heavy"]],
 		ranged:[[30, "ranged"]],
 		armour:"all",
-		shield:70
+		shield:70,
+		HD:8
 	},
 	{
 		name: 'Ranger',
@@ -283,7 +294,9 @@ var classes = [
 		weapon:[[60, "light"], [40, "light"], [100, "heavy"]],
 		ranged:[[60, "ranged"]],
 		armour:"all",
-		shield:40
+		shield:40,
+		HD:8,
+		HDcount:2
 	},
 	{
 		name: 'Thief',
@@ -291,7 +304,8 @@ var classes = [
 		weighting:1,
 		weapon:[[45, "dagger"], [10, "heavy"], [100, "light"]],
 		ranged:[[40, "light ranged"]],
-		armour:"leather"
+		armour:"leather",
+		HD:4
 	}
 ];
 
@@ -361,13 +375,15 @@ function getStat(dieCount, dropCount) {
 	return total;
 }
 
-function renderCharacterStats(stats)
+function renderCharacterStats(character)
 {
+	var stats = character.stats;
 	var text = '<DIV class="character_stats">';
 	var i;
 	for (i=0; i<NUM_STATS; i++) {
 		text += "<DIV class='character_stat'>" + stats[i] + "</DIV>";
 	}
+	text += "<DIV class='character_stat'>"+character.HP+"</DIV>";
 
 	text += '</DIV>';
 	return text;
@@ -462,11 +478,10 @@ function renderCharacterClass(character)
 		possible_classes += character.class[i].name;
 	}
 	var text = '<DIV class="character_class">';
-	var chosen_class = chooseClass(character.class, character.stats);
-	text += chosen_class.name + "</DIV><DIV class='character_pos_class'>" + (character.class.length > 1 ? "("+possible_classes+")" : "") + "</DIV>";
+	text += character.chosen_class.name + "</DIV><DIV class='character_pos_class'>" + (character.class.length > 1 ? "("+possible_classes+")" : "") + "</DIV>";
 
-	text += render_equipment(chosen_class);
-	text += render_trait(chosen_class);
+	text += render_equipment(character.chosen_class);
+	text += render_trait(character.chosen_class);
 	return text;
 }
 
@@ -482,10 +497,32 @@ function render_gender(gender) {
 	else return " (F)";
 }
 
+function get_HP(character) {
+	var i = 0;
+	var HP = 0;
+	var HDcount = 1;
+
+	if (character.chosen_class.HDcount != undefined)
+		HDcount = character.chosen_class.HDcount;
+	for (i=0; i<HDcount; i++) {
+		HP += randomRange(1, character.chosen_class.HD);
+		if (character.stats[2] >= 13)
+			HP += 1;
+		else if (character.stats[2] <= 8)
+			HP -= 1;
+	}
+	// handle case of a terrible dice roll and low Con score
+	if (HP < 1)
+		HP = 1;
+	return HP;
+}
+
 function appendResult(character) {
+	character.chosen_class = chooseClass(character.class, character.stats);
+	character.HP = get_HP(character);
 	var text='<DIV class="character"><DIV class="character_name">';
 	text += name_gen(character.gender) + render_gender(character.gender) + '</DIV>';
-	text += renderCharacterStats(character.stats);
+	text += renderCharacterStats(character);
 	text += renderCharacterClass(character);
 	text += '</DIV>';
 	//if (!test_distribution)
