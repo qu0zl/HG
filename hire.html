@@ -125,16 +125,16 @@
 <DIV class="top_button_group">
 <DIV class="top_button">
 	<div id="radioset">Number to generate:
-	<input type="radio" value=1 id="radio1" name="radio"><label for="radio1">1</label>
-	<input type="radio" value="D6" id="radio2" name="radio" checked="checked"><label for="radio2">D6</label>
-	<input type="radio" value=10 id="radio3" name="radio"><label for="radio3">10</label>
-	<input type="radio" value=20 id="radio4" name="radio"><label for="radio4">20</label>
+	<input type="radio" value=1 id="radio1" name="radio" title="Generate a single hireling"><label for="radio1">1</label>
+	<input type="radio" value="D6" id="radio2" name="radio" checked="checked" title="Generate 1 to 6 (decided randomly) hirelings"><label for="radio2">D6</label>
+	<input type="radio" value=10 id="radio3" name="radio" title="Generate 10 hirelings"><label for="radio3">10</label>
+	<input type="radio" value=20 id="radio4" name="radio" title="Generate 20 hirelings"><label for="radio4">20</label>
 	</div>
 </DIV>
 <DIV class="top_button">
 	<DIV id="statset">Stat generation method:
-	<input type="radio" value=1 id="statgen1" name="statgen"><label for="statgen1">3D6</label>
-	<input type="radio" value=2 id="statgen2" name="statgen" checked="checked"><label for="statgen2">4D6 drop lowest</label>
+	<input type="radio" value=1 id="statgen1" name="statgen" title="3D6 rolled in order"><label for="statgen1">3D6</label>
+	<input type="radio" value=2 id="statgen2" name="statgen" checked="checked" title="4d6, drop the lowest dice, rolled in order"><label for="statgen2">4D6 drop lowest</label>
 	</DIV>
 </DIV>
 </DIV>
@@ -584,7 +584,7 @@ function onReady()
 		for (stat=0; stat<6; stat++) {
 			text += "<DIV class='class_stat' name='min_stat_"+classes[i].name+'_'+stat+"'>";
 			text += '<span class=stat_header>'+STAT_SHORT_NAMES[stat]+'</span>';
-			text += '<select class="min_stat_select" data-class='+i+' data-stat='+stat+'>';
+			text += '<select title="Minimum stat allowed for entry into this class" class="min_stat_select" data-class='+i+' data-stat='+stat+'>';
 			for (j=0; j<=18; j++) {
 				if (j!=1 && j!=2)
 					if (classes[i].stats[stat] == j)
@@ -594,7 +594,7 @@ function onReady()
 			}
 			text+= '</select></DIV>';
 		}
-		text += "<DIV class='class_stat'><span class=stat_header>Weighting</span><input class='weight_input' size=3 data-class="+i+" value="+classes[i].weighting+"></input></DIV>";
+		text += "<DIV class='class_stat'><span class='stat_header'>Weighting</span><input class='weight_input' title='Weight chance of class being chosen when rolled stats allow.' size=3 data-class="+i+" value="+classes[i].weighting+"></input></DIV>";
 		text += '</DIV>';
 	    stat_div.append(text);
 
@@ -603,7 +603,7 @@ function onReady()
 	$(".min_stat_select").change(change_min_stat);
 	$(".weight_input").change(change_weighting);
 	$("#radioset input[type='radio']").change(change_number);
-
+	$('document').tooltip();
 /*
 			  change: change_min_stat
 			  }); */
