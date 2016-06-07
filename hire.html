@@ -185,6 +185,9 @@ STAT_SHORT_NAMES = ["Str", "Dex", "Con", "Int", "Wis", "Cha"];
 
 var test_distribution = 0;
 var distribution = [];
+// used to force generation of a specific class
+var generate_by_class_id = -1;
+var generate_by_class_count = 0;
 
 /* with these values and a 4D6-drop-lowest approach I got a distribution for 400,000 runs of:
 	Total:400000  Assassin:12.18625%, Cleric:16.183500000000002%, Druid:6.64825%, Dwarf:6.097%, Elf:6.249%, Fighter:17.6815%, Magic User:10.50475%, Monk:1.8145000000000002%, Paladin:5.202500000000001%, Ranger:5.725750000000001%, Thief:11.706999999999999%, 
@@ -318,6 +321,11 @@ function possible_classes(stats) {
 	for (i=0; i<classes.length; i++) {
 		if ("stats" in classes[i]) {
 			var allowed = true;
+			// if we must have a specific class then check if this class is it
+			if (generate_by_class_id >= 0) {
+				if ( i != generate_by_class_id)
+					continue;
+			}
 			for (j=0; j<classes[i].stats.length; j++) {
 				if (classes[i].stats[j] > stats[j])
 					allowed = false;
@@ -531,6 +539,8 @@ function generate() {
 	if (value == "D6") {
 		value = randomRange(1,6);
 	}
+	if (generate_by_class_count)
+		value = generate_by_class_count;
 	if (test_distribution)
 		value *= 10000;
 	for (j=0; j<value; j++) {
@@ -540,6 +550,10 @@ function generate() {
 		}
 		character['stats'] = stats;
 		character['class'] = possible_classes(stats);
+		if (generate_by_class_id >= 0 && character['class'].length != 1) {
+			j--; // we'll try this iteration again
+			continue;
+		}
 		appendResult(character);
 	}
 	if (test_distribution)
@@ -550,6 +564,8 @@ function generate() {
 $('#generate').button();
 
 $('#generate').click( function() {
+	generate_by_class_id = -1;
+	generate_by_class_count = 0;
 	generate();
 	} );
 
@@ -573,13 +589,22 @@ function change_weighting(event) {
 	classes[class_number].weighting = parseInt(event.target.value);
 }
 
+function generate_by_class(event)
+{
+	var target = $(event.target).closest('div');
+	var id = target.data("class-id");
+	generate_by_class_id = id;
+	generate_by_class_count = 1;
+	generate();
+}
+
 function onReady()
 {
 	var i, j, stat;
 	var stat_div = $('#min_stats_div');
 	for (i=0; i<classes.length; i++){
 		var text = "<DIV class='class_stats' name='min_stat_"+classes[i].name+"'>";
-		text += "<DIV class='class_title'>"+classes[i].name+"</DIV>";
+		text += "<DIV class='class_title' title='Generate a single "+classes[i].name+", respecting minimum stats chosen. May be slow if very unlikely stats are chosen such as multiple 18s.' data-class-id="+i+">"+classes[i].name+"</DIV>";
 
 		for (stat=0; stat<6; stat++) {
 			text += "<DIV class='class_stat' name='min_stat_"+classes[i].name+'_'+stat+"'>";
@@ -599,6 +624,7 @@ function onReady()
 	    stat_div.append(text);
 
 	}
+	$('.class_title').button().click(generate_by_class);
 	$('#name_credits').html(name_credits());
 	$(".min_stat_select").change(change_min_stat);
 	$(".weight_input").change(change_weighting);
