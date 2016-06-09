@@ -112,43 +112,155 @@
 	margin:5px;
 	min-width:5em;
 }
+.hidden {
+	display:none;
+}
+.builder {
+	display:block;
+}
+.print_msg {
+	font-size:larger;
+	font-style:italic;
+}
+.column {
+	display:flex;
+	flex-flow: column;
+}
+.print_character_label {
+	margin-right:1em;
+}
+.print_character_stats {
+	width:50%;
+}
+.print_character {
+	margin:5px;
+	width:100%;
+	height:100%;
+	border-style:solid;
+	border-width:thin;
+	flex-flow:column;
+	padding:2px;
+}
+.row {
+	display:flex;
+	flex-flow: row;
+}
+.pair {
+	display:flex;
+	flex-flow:row;
+	margin-top:0.5em;
+	margin-left:0.5em;
+	margin-right:0.5em;
+	align-content: center;
+	width:100%;
+}
+.underline {
+	border-bottom-style:solid;
+	border-width:thin;
+}
+.space_to_write_small {
+	min-width:3em;
+}
+.space_to_write_medium {
+	min-width:5em;
+}
+.print_div {
+	display:flex;
+	flex-flow:row;
+	background-color: white;
+	width: 210mm;
+	height: 279mm;
+	margin: 0;
+	padding: 15px;
+	font-size: 18px;
+	line-height: 20px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	align-content:space-around;
+}
+.print_div * {
+	display:flex;
+	align-content:space-around;
+}
+#print_name {
+	white-space:nowrap;
+}
+.equipment_container {
+	margin-top:1em;
+}
+#print_equipment {
+	width:100%;
+	height:100%;
+	margin:1em;
+}
+.hide_for_screen {
+	display:none;
+}
+@media print {
+	.hide_for_print {
+		display:none;
+	}
+	.hide_for_screen {
+		display:inherit;
+	}
+	#results {
+		border-style:none;
+	}
+	.character_pos_class {
+		display:flex;
+		margin:5px;
+		width:8em;
+		min-width:8em;
+	}
+	.character_trait {
+		display:flex;
+		margin:7px;
+		min-width:7em;
+	}
+	
+}
 </style>
 
 </head>
 <body>
 
-<h1 class='title'>Welcome to the Complete Hireling generator.</h1>
-<h2 class='subtitle'>A hireling generator designed with Swords & Wizardry Complete in mind, but also suitable for other Old School RPGs</h2>
+<div class="builder">
+<div class="hide_for_print">
+	<h1 class='title'>Welcome to the Complete Hireling generator.</h1>
+	<h2 class='subtitle'>A hireling generator designed with Swords & Wizardry Complete in mind, but also suitable for other Old School RPGs</h2>
 
-<!-- Button -->
-<button id="generate">Generate D6 hirelings</button>
-<DIV class="top_button_group">
-<DIV class="top_button">
-	<div id="radioset">Number to generate:
-	<input type="radio" value=1 id="radio1" name="radio" title="Generate a single hireling"><label for="radio1">1</label>
-	<input type="radio" value="D6" id="radio2" name="radio" checked="checked" title="Generate 1 to 6 (decided randomly) hirelings"><label for="radio2">D6</label>
-	<input type="radio" value=10 id="radio3" name="radio" title="Generate 10 hirelings"><label for="radio3">10</label>
-	<input type="radio" value=20 id="radio4" name="radio" title="Generate 20 hirelings"><label for="radio4">20</label>
+	<button id="generate">Generate D6 hirelings</button>
+	<DIV class="top_button_group">
+	<DIV class="top_button">
+		<div id="radioset">Number to generate:
+		<input type="radio" value=1 id="radio1" name="radio" title="Generate a single hireling"><label for="radio1">1</label>
+		<input type="radio" value="D6" id="radio2" name="radio" checked="checked" title="Generate 1 to 6 (decided randomly) hirelings"><label for="radio2">D6</label>
+		<input type="radio" value=10 id="radio3" name="radio" title="Generate 10 hirelings"><label for="radio3">10</label>
+		<input type="radio" value=20 id="radio4" name="radio" title="Generate 20 hirelings"><label for="radio4">20</label>
+		</div>
+	</DIV>
+	<DIV class="top_button">
+		<DIV id="statset">Stat generation:
+		<input type="radio" value=1 id="statgen1" name="statgen" title="3D6 rolled in order"><label for="statgen1">3D6</label>
+		<input type="radio" value=2 id="statgen2" name="statgen" checked="checked" title="4d6, drop the lowest dice, rolled in order"><label for="statgen2">4D6 drop lowest</label>
+		</DIV>
+	</DIV>
+	<DIV class="top_button">
+		<DIV id="equipset">Equipment generation:
+		<input type="radio" value=1 id="equipgen1" name="equipgen" checked="checked" title="Automatically select weapon/armour."><label for="equipgen1">Auto-Equip</label>
+		<input type="radio" value=2 id="equipgen2" name="equipgen" title="3D6 x 10 GP"><label for="equipgen2">Roll GP</label>
+		</DIV>
+	</DIV>
+	</DIV>
+
+	<div id='min_stats_div'>
 	</div>
 </DIV>
-<DIV class="top_button">
-	<DIV id="statset">Stat generation:
-	<input type="radio" value=1 id="statgen1" name="statgen" title="3D6 rolled in order"><label for="statgen1">3D6</label>
-	<input type="radio" value=2 id="statgen2" name="statgen" checked="checked" title="4d6, drop the lowest dice, rolled in order"><label for="statgen2">4D6 drop lowest</label>
-	</DIV>
-</DIV>
-<DIV class="top_button">
-	<DIV id="equipset">Equipment generation:
-	<input type="radio" value=1 id="equipgen1" name="equipgen" checked="checked" title="Automatically select weapon/armour."><label for="equipgen1">Auto-Equip</label>
-	<input type="radio" value=2 id="equipgen2" name="equipgen" title="3D6 x 10 GP"><label for="equipgen2">Roll GP</label>
-	</DIV>
-</DIV>
-</DIV>
-
-<div id='min_stats_div'>
-</div>
-
 <DIV id='results'>
+	<DIV class="character print_msg hidden">
+		<DIV class="hide_for_print">Click on a character name to see a printable character sheet. Click on the sheet to return to this view.</DIV>
+	</DIV>
 	<DIV class="character">
 		<DIV class="character_name">Name</DIV>
 		<DIV class="character_stats">
@@ -164,10 +276,52 @@
 		<DIV class='character_pos_class'>Possible Classes</DIV>
 	</DIV>
 </div>
-<DIV id='credits' class='credits'>
+<DIV id='credits' class='credits hide_for_print'>
 	<DIV id='name_credits' class='credit'></DIV>
 	<DIV id='SW_Credits' class='credit'>This site is not affiliated with Matthew J. Finch or Mythmere Games™. Swords & Wizardry, S&W, and Mythmere Games are the trademarks of Matthew J. Finch.</DIV>
 </DIV>
+</DIV>
+<div style="display:none;" class="print_div">
+	<DIV class="print_character">
+		<DIV class="row">
+			<DIV class="pair"><div class="print_character_label">Name:</DIV><DIV id='print_name'>greg</DIV></DIV>
+			<DIV class="pair"><div class="print_character_label">Class:</DIV><DIV id='print_class'>Cleric</DIV></DIV>
+			<DIV class="pair"><div class="print_character_label">Race:</DIV><DIV id='print_race'>Human</DIV></DIV>
+		</DIV>
+		<DIV class="row">
+			<DIV class="pair"><div class="print_character_label">Gender:</DIV><DIV id='print_gender'>Male</DIV></DIV>
+			<DIV class="pair"><div class="print_character_label">Level:</DIV><DIV id='print_level'>1</DIV></DIV>
+			<DIV class="pair"><div class="print_character_label">Align:</DIV><DIV class="underline space_to_write_small" id='print_align'></DIV></DIV>
+		</DIV>
+		<DIV>
+			<DIV class="pair"><div class="print_character_label">Deity:</DIV><DIV class="underline space_to_write_medium" id='print_deity'></DIV></DIV>
+			<DIV class="pair"><div class="print_character_label">XP:</DIV><DIV class="underline space_to_write_medium" id='print_XP'></DIV></DIV>
+		</DIV>
+		<DIV class="row">
+			<DIV class="print_character_stats column">
+				<DIV class="pair"><DIV class="character_stat">Str</DIV><DIV id='print_Str'>?</DIV></DIV>
+				<DIV class="pair"><DIV class="character_stat">Dex</DIV><DIV id='print_Dex'>?</DIV></DIV>
+				<DIV class="pair"><DIV class="character_stat">Con</DIV><DIV id='print_Con'>?</DIV></DIV>
+				<DIV class="pair"><DIV class="character_stat">Int</DIV><DIV id='print_Int'>?</DIV></DIV>
+				<DIV class="pair"><DIV class="character_stat">Wis</DIV><DIV id='print_Wis'>?</DIV></DIV>
+				<DIV class="pair"><DIV class="character_stat">Cha</DIV><DIV id='print_Cha'>?</DIV></DIV>
+			</DIV>
+			<DIV class="print_character_stats column">
+				<DIV class="pair"><DIV class="character_stat">HP</DIV><DIV id='print_HP'>?</DIV></DIV>
+				<DIV class="pair"><DIV class="character_stat">Save</DIV><DIV id='print_save'>?</DIV></DIV>
+				<DIV class="pair"><DIV class="character_stat">AC</DIV><DIV class="underline space_to_write_medium" id='print_AC'> </DIV></DIV>
+			</DIV>
+		</DIV>
+		<DIV class="column">
+			<DIV class="equipment_container">
+			<DIV class="print_character_label">Equipment:</DIV>
+			<DIV id="print_equipment">
+			</DIV>
+			</DIV>
+		</DIV>
+	</DIV>
+</div>
+
 
 
 <script src="jquery.js"></script>
@@ -195,6 +349,8 @@ var distribution = [];
 // used to force generation of a specific class
 var generate_by_class_id = -1;
 var generate_by_class_count = 0;
+var char_ID = 0;
+var first_char = 1;
 
 // do we auto-generate equipment or roll gold?
 var equip_method = 0;
@@ -217,6 +373,7 @@ var classes = [
 		weapon:[[100, "light"], [40, "light"], [25, "heavy"]],
 		ranged:[[40, "light ranged"]],
 		shield:35,
+		save:15,
 		HD:6
 	},
 	{
@@ -227,6 +384,7 @@ var classes = [
 		weapon:[[100,"cleric"]],
 		ranged:[[25, "cleric ranged"]],
 		shield:40,
+		save:15,
 		HD:6
 	},
 	{
@@ -237,6 +395,7 @@ var classes = [
 		weapon:[[100, "druid"]],
 		ranged:[[40, "cleric ranged"]],
 		shield:40,
+		save:15,
 		HD:6
 	},
 	{
@@ -247,6 +406,7 @@ var classes = [
 		ranged:[[10, "ranged"]],
 		armour:"all",
 		shield:40,
+		save:14,
 		HD:8
 	},
 	{
@@ -257,6 +417,7 @@ var classes = [
 		ranged:[[50, "ranged"]],
 		armour:"all",
 		shield:30,
+		save:14,
 		// should average results of a D4 and a D8. Taking a single D6 is very close and good enough for now
 		HD:6
 	},
@@ -268,6 +429,7 @@ var classes = [
 		ranged:[[50, "ranged"]],
 		armour:"all",
 		shield:50,
+		save:14,
 		HD:8
 	},
 	{
@@ -276,6 +438,7 @@ var classes = [
 		weighting:1,
 		weapon:[[100, "magic user"]],
 		ranged:[[60, "magic user ranged"]],
+		save:15,
 		HD:4
 	},
 	{
@@ -284,6 +447,7 @@ var classes = [
 		weighting:20,
 		weapon:[[100, "monk"], [10, "monk"]],
 		ranged:[[10, "ranged"]],
+		save:15,
 		HD:4
 	},
 	{
@@ -294,6 +458,7 @@ var classes = [
 		ranged:[[30, "ranged"]],
 		armour:"all",
 		shield:70,
+		save:12,
 		HD:8
 	},
 	{
@@ -305,6 +470,7 @@ var classes = [
 		armour:"all",
 		shield:40,
 		HD:8,
+		save:14,
 		HDcount:2
 	},
 	{
@@ -314,6 +480,7 @@ var classes = [
 		weapon:[[45, "dagger"], [10, "heavy"], [100, "light"]],
 		ranged:[[40, "light ranged"]],
 		armour:"leather",
+		save:15,
 		HD:4
 	}
 ];
@@ -457,26 +624,27 @@ function render_trait(character_class) {
 	return text;
 }
 
-function render_equipment(character_class) {
+function render_equipment(character) {
 	var i = 0;
-	text = "<DIV class='character_equipment'>";
+	var text = "<DIV class='character_equipment'>";
+	character.equipment = "";
 	if ( equip_method == 0 ) {
-		var weapons = get_weapons(character_class.weapon);
-		var ranged = get_weapons(character_class.ranged);
+		var weapons = get_weapons(character.chosen_class.weapon);
+		var ranged = get_weapons(character.chosen_class.ranged);
 		for (i=0; i<ranged.length; i++)
 			weapons.push(ranged[i]);
 
 		for (i=0; i<weapons.length; i++) {
 			if (i>0)
-				text += ', ';
-			text += weapons[i];
+				character.equipment += ', ';
+			character.equipment += weapons[i];
 		}
 
-		text += render_armour(character_class);
+		character.equipment += render_armour(character.chosen_class);
 	} else {
-		text += ((randomRange(1,6)+randomRange(1,6)+randomRange(1,6))*10) + " GP";
+		character.equipment += ((randomRange(1,6)+randomRange(1,6)+randomRange(1,6))*10) + " GP";
 	}
-	text += "</DIV>";
+	text += character.equipment + "</DIV>";
 	return text;
 }
 
@@ -492,7 +660,7 @@ function renderCharacterClass(character)
 	var text = '<DIV class="character_class">';
 	text += character.chosen_class.name + "</DIV><DIV class='character_pos_class'>" + (character.class.length > 1 ? "("+possible_classes+")" : "") + "</DIV>";
 
-	text += render_equipment(character.chosen_class);
+	text += render_equipment(character);
 	text += render_trait(character.chosen_class);
 	return text;
 }
@@ -502,11 +670,12 @@ function renderCharacterClass(character)
    not binary. */
 function render_gender(gender) {
 	var TS = randomRange(0,99);
-	if (TS==0)
-		return " (TS)";
+	if (TS == 0)
+		return "TS";
 	else if (gender == 0)
-		return " (M)";
-	else return " (F)";
+		 return "M";
+	else
+		return "F";
 }
 
 function get_HP(character) {
@@ -532,8 +701,12 @@ function get_HP(character) {
 function appendResult(character) {
 	character.chosen_class = chooseClass(character.class, character.stats);
 	character.HP = get_HP(character);
-	var text='<DIV class="character"><DIV class="character_name">';
-	text += name_gen(character.gender) + render_gender(character.gender) + '</DIV>';
+	character.name = name_gen(character.gender);
+	character.gender_text = render_gender(character.gender);
+	char_ID++;
+	var text='<DIV id="char_' + char_ID + '"class="character"><DIV class="character_name hide_for_print character_button">';
+	text += character.name + " (" + character.gender_text + ')</DIV><DIV class="character_name hide_for_screen">';
+	text += character.name + " (" + character.gender_text + ')</DIV>';
 	text += renderCharacterStats(character);
 	text += renderCharacterClass(character);
 	text += '</DIV>';
@@ -561,9 +734,13 @@ function calc_dist() {
 	console.log(text);
 }
 
+function show_print_msg() {
+	$('.print_msg').show();
+
+	first_char = 0;
+}
+
 function generate() {
-	var stats = [];
-	var character = {};
 	var i, j;
 	var radio = $("#radioset input[type='radio']:checked");
 	var stat_method_radio = $("#statset input[type='radio']:checked");
@@ -600,20 +777,26 @@ function generate() {
 	if (test_distribution)
 		value *= 10000;
 	for (j=0; j<value; j++) {
+		var character = {};
+		character.stats = [];
 		character.gender = randomRange(0,1);
 		for (i=0; i<NUM_STATS; i++){
-			stats[i] = getStat(num_die,drop_die);
+			character.stats[i] = getStat(num_die,drop_die);
 		}
-		character['stats'] = stats;
-		character['class'] = possible_classes(stats);
+		character['class'] = possible_classes(character.stats);
 		if (generate_by_class_id >= 0 && character['class'].length != 1) {
 			j--; // we'll try this iteration again
 			continue;
 		}
 		appendResult(character);
+		$('#char_'+char_ID).data('character', character);
+		if (first_char)
+			show_print_msg();
 	}
 	if (test_distribution)
 		calc_dist();
+
+	$(".character_button").button().click(print_character);
 
 }
 
@@ -643,6 +826,32 @@ function change_min_stat(event) {
 function change_weighting(event) {
 	var class_number = $(event.target).data('class');
 	classes[class_number].weighting = parseInt(event.target.value);
+}
+
+function print_character(event)
+{
+	var target = $(event.target).closest('.character');
+	var data = target.data("character");
+	$('#print_name').text(data.name);
+	$('#print_class').text(data.chosen_class.name);
+	$('#print_gender').text(data.gender_text);
+	$('#print_save').text(data.chosen_class.save);
+	$('#print_HP').text(data.HP);
+	$('#print_Str').text(data.stats[0]);
+	$('#print_Dex').text(data.stats[1]);
+	$('#print_Con').text(data.stats[2]);
+	$('#print_Int').text(data.stats[3]);
+	$('#print_Wis').text(data.stats[4]);
+	$('#print_Cha').text(data.stats[5]);
+	$('#print_equipment').text(data.equipment);
+	$('.builder').hide();
+	$('.print_div').show();
+	$('body').one("click", function() {
+			$('.print_div').hide();
+			$('.builder').show();
+			event.stopPropagation();
+			});
+	event.stopPropagation();
 }
 
 function generate_by_class(event)
