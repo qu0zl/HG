@@ -55,6 +55,14 @@
 	display:inline-block;
 	flex-flow: column;
 }
+.clear_title {
+	width:100%;
+	font-weight:bold;
+	font-size:larger;
+	margin:5px;
+	display:inline-block;
+	flex-flow: column;
+}
 .credits {
 	font-weight:light;
 	font-size:smaller;
@@ -274,6 +282,8 @@
 		</DIV>
 		<DIV class="character_class">Class</DIV>
 		<DIV class='character_pos_class'>Possible Classes</DIV>
+	</DIV>
+	<DIV id='results_work_area'>
 	</DIV>
 </div>
 <DIV id='credits' class='credits hide_for_print'>
@@ -711,7 +721,7 @@ function appendResult(character) {
 	text += renderCharacterClass(character);
 	text += '</DIV>';
 	//if (!test_distribution)
-		$('#results').append(text);
+		$('#results_work_area').append(text);
 }
 
 function calc_dist() {
@@ -736,7 +746,7 @@ function calc_dist() {
 
 function show_print_msg() {
 	$('.print_msg').show();
-
+	$('#clear_button').show();
 	first_char = 0;
 }
 
@@ -863,6 +873,14 @@ function generate_by_class(event)
 	generate();
 }
 
+function clear_chars(events)
+{
+	$('#results_work_area').html("");
+	$('.print_msg').hide();
+	$('#clear_button').hide();
+	first_char = 1;
+}
+
 function onReady()
 {
 	var i, j, stat;
@@ -889,7 +907,9 @@ function onReady()
 	    stat_div.append(text);
 
 	}
+	stat_div.append("<DIV class='hidden' id='clear_button'><DIV class='clear_title'>Clear Generated Characters</DIV></DIV>");
 	$('.class_title').button().click(generate_by_class);
+	$('.clear_title').button().click(clear_chars);
 	$('#name_credits').html(name_credits());
 	$(".min_stat_select").change(change_min_stat);
 	$(".weight_input").change(change_weighting);
