@@ -725,7 +725,7 @@ function get_level() {
     if (max_level > 1) {
         var level = max_level;
 
-        for (level = max_level; level--; level>1){
+        for (level = max_level; level>1; level--){
             if (1/(level*level) > chance) {
                 return level;
             }
