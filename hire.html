@@ -260,6 +260,13 @@
 		<input type="radio" value=2 id="equipgen2" name="equipgen" title="3D6 x 10 GP"><label for="equipgen2">Roll GP</label>
 		</DIV>
 	</DIV>
+	<DIV class="top_button">
+		<DIV id="half_hit_die">Hit-Dice options:
+		<input type="radio" value=1 id="first_hit_die1" name="first_hit_die" checked="checked" title="No modification to Hit-Dice rolled (except Con mod)."><label for="first_hit_die1">As rolled</label>
+		<input type="radio" value=2 id="first_hit_die2" name="first_hit_die" title="Minimum half for first Hit-Die."><label for="first_hit_die2">Min. half 1st HD</label>
+		<input type="radio" value=3 id="first_hit_die3" name="first_hit_die" title="Maximum for first Hit-Die"><label for="first_hit_die3">Max. 1st HD</label>
+		</DIV>
+	</DIV>
 	</DIV>
 
 	<div id='min_stats_div'>
@@ -364,6 +371,8 @@ var first_char = 1;
 
 // do we auto-generate equipment or roll gold?
 var equip_method = 0;
+// do we modify hit-dice rolled?
+var hit_die_method = 1;
 
 /* with these values and a 4D6-drop-lowest approach I got a distribution for 400,000 runs of:
 	Total:400000  Assassin:12.18625%, Cleric:16.183500000000002%, Druid:6.64825%, Dwarf:6.097%, Elf:6.249%, Fighter:17.6815%, Magic User:10.50475%, Monk:1.8145000000000002%, Paladin:5.202500000000001%, Ranger:5.725750000000001%, Thief:11.706999999999999%, 
@@ -692,19 +701,25 @@ function get_HP(character) {
 	var i = 0;
 	var HP = 0;
 	var HDcount = 1;
+    var thisDie;
 
 	if (character.chosen_class.HDcount != undefined)
 		HDcount = character.chosen_class.HDcount;
 	for (i=0; i<HDcount; i++) {
-		HP += randomRange(1, character.chosen_class.HD);
+        if (hit_die_method == 3)
+            thisDie = character.chosen_class.HD;
+        else 
+            thisDie = randomRange(1, character.chosen_class.HD);
+
+        if (hit_die_method == 2 && thisDie < (character.chosen_class.HD/2)+1)
+            thisDie = (character.chosen_class.HD/2)+1;
+
 		if (character.stats[2] >= 13)
-			HP += 1;
-		else if (character.stats[2] <= 8)
-			HP -= 1;
+			thisDie += 1;
+        else if (character.stats[2] <= 8 && thisDie > 1) // no HD should be reduced below 1
+			thisDie -= 1;
+        HP += thisDie;
 	}
-	// handle case of a terrible dice roll and low Con score
-	if (HP < 1)
-		HP = 1;
 	return HP;
 }
 
@@ -755,6 +770,7 @@ function generate() {
 	var radio = $("#radioset input[type='radio']:checked");
 	var stat_method_radio = $("#statset input[type='radio']:checked");
 	var equip_method_radio = $("#equipset input[type='radio']:checked");
+	var hit_die_method_radio = $("#half_hit_die input[type='radio']:checked");
 	var num_die = 4;
 	var drop_die = 1;
 	if ( stat_method_radio.length > 0) {
@@ -775,6 +791,14 @@ function generate() {
 		else
 			equip_method = 1;
 	}
+    if ( hit_die_method_radio.length > 0) {
+        if (hit_die_method_radio.val() == "2")
+            hit_die_method = 2;
+        else if (hit_die_method_radio.val() == "3")
+            hit_die_method = 3;
+        else
+            hit_die_method = 1;
+    }
 	var value = 1;
 	if (radio.length > 0) {
 		value = radio.val();
