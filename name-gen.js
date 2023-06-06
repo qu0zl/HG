@@ -41,5 +41,5 @@ function name_gen(gender) {
 }
 
 function name_credits() {
-	return "Names courtesy of Matt Finch, from his Borderland Provinces campaign setting book. Available at <a href=http://www.tabletoplibrary.com>TableTopLibrary</a>, along with other great Matt Finch, OSR, 5e and RPG products.";
+	return "Names courtesy of Matt Finch, from his Borderland Provinces campaign setting book. Available Available <a href=https://www.drivethrurpg.com/product/175975/Borderland-Provinces-Swords-and-Wizardry>here</a>, along with other great Matt Finch, Frog God, and OSR products.";
 }
